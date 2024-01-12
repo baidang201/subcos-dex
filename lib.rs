@@ -1,7 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
-use scale::{Decode, Encode};
-
 use openbrush::traits::{AccountId, Timestamp};
+use scale::{Decode, Encode};
 
 #[derive(Encode, Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -17,6 +16,7 @@ pub enum OrderType {
 }
 
 #[derive(Decode, Encode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct Order {
     counter: u32, //order index
     address: AccountId,
@@ -27,11 +27,11 @@ pub struct Order {
     amout_requested: u128,
 }
 
-#[cfg(feature = "psp37")]
 #[ink::contract]
 mod subcosdex {
-    use crate::DexError;
-    use crate::OrderType;
+    use crate::{DexError, Order, OrderType};
+    use ink::prelude::vec;
+    use ink::prelude::vec::Vec;
     use openbrush::contracts::psp37::Id;
 
     /// Defines the storage of your contract.
@@ -57,49 +57,49 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn deposit(&mut self, asset_id: Id, amount: u128) -> Result<(), DexError> {
+        pub fn deposit(&mut self, _asset_id: Id, _amount: u128) -> Result<(), DexError> {
             Ok(())
         }
 
         #[ink(message)]
-        pub fn balance_of(&self, owner: AccountId, id: Id) -> Balance {
-            Balance::new(111)
+        pub fn balance_of(&self, _owner: AccountId, _id: Id) -> Balance {
+            Balance::MAX
         }
 
         #[ink(message)]
-        pub fn withdraw(&mut self, asset_id: Id, amount: u128) -> Result<(), DexError> {
+        pub fn withdraw(&mut self, _asset_id: Id, _amount: u128) -> Result<(), DexError> {
             Ok(())
         }
 
         #[ink(message)]
         pub fn tokens(&self) -> Vec<Id> {
-            vec![1, 3, 9, 11]
+            vec![Id::U64(1), Id::U64(3), Id::U64(9), Id::U64(11)]
         }
 
         #[ink(message)]
-        pub fn owners_tokens(owner: AccountId) -> Vec<Id> {
-            vec![1, 3]
+        pub fn owners_tokens(&self, _owner: AccountId) -> Vec<Id> {
+            vec![Id::U64(1), Id::U64(3)]
         }
 
         #[ink(message)]
-        pub fn order_for(&self, order_index: u128) -> Option<Order> {
-            Order {
+        pub fn order_for(&self, _order_index: u128) -> Option<Order> {
+            Some(Order {
                 counter: 0,
-                address: AccountId::default(),
+                address: AccountId::from([0x01; 32]),
                 pair: (1, 3),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
                 amount_offered: 2,
                 amout_requested: 1,
-            }
+            })
         }
 
         #[ink(message)]
-        pub fn pair_orders(&self, asset_id_1: Id, asset_id_2: Id) -> Vec<Order> {
+        pub fn pair_orders(&self, _asset_id_1: Id, _asset_id_2: Id) -> Vec<Order> {
             vec![
                 Order {
                     counter: 0,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (1, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
@@ -108,7 +108,7 @@ mod subcosdex {
                 },
                 Order {
                     counter: 1,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (1, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
@@ -119,11 +119,11 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn get_user_orders(&self, owner: AccountId) -> Vec<Order> {
+        pub fn get_user_orders(&self, _owner: AccountId) -> Vec<Order> {
             vec![
                 Order {
                     counter: 0,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (1, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
@@ -132,7 +132,7 @@ mod subcosdex {
                 },
                 Order {
                     counter: 1,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (1, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
@@ -141,7 +141,7 @@ mod subcosdex {
                 },
                 Order {
                     counter: 2,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (2, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
@@ -150,7 +150,7 @@ mod subcosdex {
                 },
                 Order {
                     counter: 3,
-                    address: AccountId::default(),
+                    address: AccountId::from([0x01; 32]),
                     pair: (2, 3),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
@@ -163,37 +163,37 @@ mod subcosdex {
         #[ink(message)]
         pub fn make_order(
             &self,
-            asset_id_1: Id,
-            asset_id_2: Id,
-            offered_amount: u128,
-            requested_amount: u128,
-            order_type: OrderType,
+            _asset_id_1: Id,
+            _asset_id_2: Id,
+            _offered_amount: u128,
+            _requested_amount: u128,
+            _order_type: OrderType,
         ) -> Result<(), DexError> {
             Ok(())
         }
 
         #[ink(message)]
-        pub fn cancel_order(&self, order_index: u128) -> Result<(), DexError> {
+        pub fn cancel_order(&self, _order_index: u128) -> Result<(), DexError> {
             Ok(())
         }
 
         #[ink(message)]
-        pub fn take_order(&self, order_index: u128) -> Result<(), DexError> {
+        pub fn take_order(&self, _order_index: u128) -> Result<(), DexError> {
             Ok(())
         }
 
         #[ink(message)]
         pub fn owner_token_by_index(&self, index: u32) -> Id {
             // will use pallet map iter later
-            index
+            Id::U64(index.into())
         }
 
         #[ink(message)]
-        pub fn pair_order_by_Index(&self, index: u32) -> Order {
+        pub fn pair_order_by_index(&self, _index: u32) -> Order {
             // will use pallet map iter later
             Order {
                 counter: 0,
-                address: AccountId::default(),
+                address: AccountId::from([0x01; 32]),
                 pair: (1, 3),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
@@ -203,11 +203,11 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn user_order_by_Index(&self, index: u32) -> Order {
+        pub fn user_order_by_index(&self, _index: u32) -> Order {
             // will use pallet map iter later
             Order {
                 counter: 0,
-                address: AccountId::default(),
+                address: AccountId::from([0x01; 32]),
                 pair: (1, 3),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
