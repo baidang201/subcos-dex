@@ -1,4 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
+use openbrush::contracts::psp37::Id;
 use openbrush::traits::{AccountId, Timestamp};
 use scale::{Decode, Encode};
 
@@ -20,7 +21,7 @@ pub enum OrderType {
 pub struct Order {
     counter: u32, //order index
     address: AccountId,
-    pair: (u128, u128), //AssetId_1 is base,  AssetId_2 is quote token
+    pair: (Id, Id), //AssetId_1 is base,  AssetId_2 is quote token
     timestamp: Timestamp,
     order_type: OrderType,
     amount_offered: u128,
@@ -29,10 +30,10 @@ pub struct Order {
 
 #[ink::contract]
 mod subcosdex {
+    use crate::Id;
     use crate::{DexError, Order, OrderType};
     use ink::prelude::vec;
     use ink::prelude::vec::Vec;
-    use openbrush::contracts::psp37::Id;
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
@@ -86,7 +87,7 @@ mod subcosdex {
             Some(Order {
                 counter: 0,
                 address: AccountId::from([0x01; 32]),
-                pair: (1, 3),
+                pair: (Id::U64(1), Id::U64(3)),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
                 amount_offered: 2,
@@ -100,7 +101,7 @@ mod subcosdex {
                 Order {
                     counter: 0,
                     address: AccountId::from([0x01; 32]),
-                    pair: (1, 3),
+                    pair: (Id::U64(1), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
                     amount_offered: 2,
@@ -109,7 +110,7 @@ mod subcosdex {
                 Order {
                     counter: 1,
                     address: AccountId::from([0x01; 32]),
-                    pair: (1, 3),
+                    pair: (Id::U64(1), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
                     amount_offered: 1,
@@ -119,12 +120,12 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn get_user_orders(&self, _owner: AccountId) -> Vec<Order> {
+        pub fn user_orders(&self, _owner: AccountId) -> Vec<Order> {
             vec![
                 Order {
                     counter: 0,
                     address: AccountId::from([0x01; 32]),
-                    pair: (1, 3),
+                    pair: (Id::U64(1), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
                     amount_offered: 2,
@@ -133,7 +134,7 @@ mod subcosdex {
                 Order {
                     counter: 1,
                     address: AccountId::from([0x01; 32]),
-                    pair: (1, 3),
+                    pair: (Id::U64(1), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
                     amount_offered: 1,
@@ -142,7 +143,7 @@ mod subcosdex {
                 Order {
                     counter: 2,
                     address: AccountId::from([0x01; 32]),
-                    pair: (2, 3),
+                    pair: (Id::U64(2), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
                     amount_offered: 2,
@@ -151,7 +152,7 @@ mod subcosdex {
                 Order {
                     counter: 3,
                     address: AccountId::from([0x01; 32]),
-                    pair: (2, 3),
+                    pair: (Id::U64(2), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
                     amount_offered: 1,
@@ -194,7 +195,7 @@ mod subcosdex {
             Order {
                 counter: 0,
                 address: AccountId::from([0x01; 32]),
-                pair: (1, 3),
+                pair: (Id::U64(1), Id::U64(3)),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
                 amount_offered: 2,
@@ -208,7 +209,7 @@ mod subcosdex {
             Order {
                 counter: 0,
                 address: AccountId::from([0x01; 32]),
-                pair: (1, 3),
+                pair: (Id::U64(1), Id::U64(3)),
                 timestamp: self.env().block_timestamp(),
                 order_type: OrderType::BUY,
                 amount_offered: 2,
