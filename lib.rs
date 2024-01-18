@@ -44,6 +44,43 @@ mod subcosdex {
         value: bool,
     }
 
+    #[ink(event)]
+    pub struct Deposit {
+        #[ink(topic)]
+        asset_id: Id,
+        amount: u128,
+    }
+
+    #[ink(event)]
+    pub struct Withdraw {
+        #[ink(topic)]
+        asset_id: Id,
+        amount: u128,
+    }
+
+    #[ink(event)]
+    pub struct OrderCreated {
+        #[ink(topic)]
+        asset_id_1: Id,
+        #[ink(topic)]
+        asset_id_2: Id,
+        offered_amount: u128,
+        requested_amount: u128,
+        order_type: OrderType,
+    }
+
+    #[ink(event)]
+    pub struct OrderCanceled {
+        #[ink(topic)]
+        counter: u128,
+    }
+
+    #[ink(event)]
+    pub struct OrderTaken {
+        #[ink(topic)]
+        counter: u128,
+    }
+
     impl Subcosdex {
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
@@ -59,6 +96,10 @@ mod subcosdex {
 
         #[ink(message)]
         pub fn deposit(&mut self, _asset_id: Id, _amount: u128) -> Result<(), DexError> {
+            Self::env().emit_event(Deposit {
+                asset_id: _asset_id,
+                amount: _amount,
+            });
             Ok(())
         }
 
@@ -69,12 +110,16 @@ mod subcosdex {
 
         #[ink(message)]
         pub fn withdraw(&mut self, _asset_id: Id, _amount: u128) -> Result<(), DexError> {
+            Self::env().emit_event(Withdraw {
+                asset_id: _asset_id,
+                amount: _amount,
+            });
             Ok(())
         }
 
         #[ink(message)]
         pub fn tokens(&self) -> Vec<Id> {
-            vec![Id::U64(1), Id::U64(3), Id::U64(9), Id::U64(11)]
+            vec![Id::U64(1), Id::U128(2), Id::U64(3), Id::U16(9), Id::U64(11)]
         }
 
         #[ink(message)]
@@ -170,16 +215,31 @@ mod subcosdex {
             _requested_amount: u128,
             _order_type: OrderType,
         ) -> Result<(), DexError> {
+            Self::env().emit_event(OrderCreated {
+                asset_id_1: _asset_id_1,
+                asset_id_2: _asset_id_2,
+                offered_amount: _offered_amount,
+                requested_amount: _requested_amount,
+                order_type: _order_type,
+            });
+
             Ok(())
         }
 
         #[ink(message)]
         pub fn cancel_order(&self, _order_index: u128) -> Result<(), DexError> {
+            Self::env().emit_event(OrderCanceled {
+                counter: _order_index,
+            });
+
             Ok(())
         }
 
         #[ink(message)]
         pub fn take_order(&self, _order_index: u128) -> Result<(), DexError> {
+            Self::env().emit_event(OrderTaken {
+                counter: _order_index,
+            });
             Ok(())
         }
 
