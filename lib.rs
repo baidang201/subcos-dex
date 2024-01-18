@@ -188,7 +188,7 @@ mod subcosdex {
                 Order {
                     counter: 2,
                     address: AccountId::from([0x01; 32]),
-                    pair: (Id::U64(2), Id::U64(3)),
+                    pair: (Id::U128(2), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::BUY,
                     amount_offered: 2,
@@ -197,7 +197,7 @@ mod subcosdex {
                 Order {
                     counter: 3,
                     address: AccountId::from([0x01; 32]),
-                    pair: (Id::U64(2), Id::U64(3)),
+                    pair: (Id::U128(2), Id::U64(3)),
                     timestamp: self.env().block_timestamp(),
                     order_type: OrderType::SELL,
                     amount_offered: 1,
