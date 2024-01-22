@@ -420,7 +420,7 @@ mod subcosdex {
 
         #[ink(message)]
         pub fn make_order(
-            &self,
+            &mut self,
             asset_id_1: Id,
             asset_id_2: Id,
             offered_amount: u128,
@@ -461,7 +461,7 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn cancel_order(&self, order_index: u64) -> Result<(), DexError> {
+        pub fn cancel_order(&mut self, order_index: u64) -> Result<(), DexError> {
             let _ = self
                 .env()
                 .extension()
@@ -476,7 +476,7 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn take_order(&self, order_index: u64) -> Result<(), DexError> {
+        pub fn take_order(&mut self, order_index: u64) -> Result<(), DexError> {
             let _ = self
                 .env()
                 .extension()
