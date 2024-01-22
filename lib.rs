@@ -59,10 +59,10 @@ pub enum OrderType {
 #[derive(Decode, Encode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct Order {
-    counter: u32, //order index
+    counter: u64, //order index
     address: AccountId,
     pair: (Id, Id), //AssetId_1 is base,  AssetId_2 is quote token
-    timestamp: Timestamp,
+    timestamp: u64,
     order_type: OrderType,
     amount_offered: u128,
     amout_requested: u128,
@@ -71,7 +71,7 @@ pub struct Order {
 #[derive(Decode, Encode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct WrapperOrder {
-    counter: u32, //order index
+    counter: u64, //order index
     address: DefaultAccountId,
     pair: (u32, u32), //AssetId_1 is base,  AssetId_2 is quote token
     timestamp: u64,
@@ -117,19 +117,19 @@ pub trait DexExtension {
         order_type: OrderType,
     ) -> Result<()>;
 
-    #[ink(extension = 0x50010)]
+    #[ink(extension = 0x5000a)]
     fn cancel_order(order_index: u64) -> Result<()>;
 
-    #[ink(extension = 0x50011)]
+    #[ink(extension = 0x5000b)]
     fn take_order(order_index: u64) -> Result<()>;
 
-    #[ink(extension = 0x50012)]
-    fn owner_token_by_index(index: u64) -> Result<u32>;
+    #[ink(extension = 0x5000c)]
+    fn owner_token_by_index(owner: DefaultAccountId, index: u64) -> Result<u32>;
 
-    #[ink(extension = 0x50013)]
+    #[ink(extension = 0x5000d)]
     fn pair_order_by_index(asset_id_1: u32, asset_id_2: u32, index: u64) -> Result<WrapperOrder>;
 
-    #[ink(extension = 0x50014)]
+    #[ink(extension = 0x5000e)]
     fn user_order_by_index(owner: DefaultAccountId, index: u64) -> Result<WrapperOrder>;
 }
 
@@ -491,11 +491,11 @@ mod subcosdex {
         }
 
         #[ink(message)]
-        pub fn owner_token_by_index(&self, index: u64) -> Id {
+        pub fn owner_token_by_index(&self, owner: AccountId, index: u64) -> Id {
             let rt = self
                 .env()
                 .extension()
-                .owner_token_by_index(index)
+                .owner_token_by_index(owner, index)
                 .map_err(|e| DexError::Custom(e.into()));
 
             match rt {
